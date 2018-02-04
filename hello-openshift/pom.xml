@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>info.moroff.recipemanager</groupId>
+  <artifactId>hello-openshift</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <description>First try with openshift</description>
+  <name>RHOAR Getting Started - WildFly Swarm - Health Check</name>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <maven.min.version>3.3.9</maven.min.version>
+    <jdk.min.version>${maven.compiler.source}</jdk.min.version>
+
+    <version.wildfly.swarm>2017.9.5</version.wildfly.swarm>
+    <version.resteasy>3.0.19.Final</version.resteasy>
+    <version.override.jackson>2.7.7</version.override.jackson>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+    <fabric8-maven-plugin.version>3.5.30</fabric8-maven-plugin.version>
+    <fabric8.generator.from>registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift
+    </fabric8.generator.from>
+    <maven-war-plugin.version>3.1.0</maven-war-plugin.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.wildfly.swarm</groupId>
+        <artifactId>bom</artifactId>
+        <version>${version.wildfly.swarm}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- 
+      <dependency>
+        <groupId>org.wildfly.swarm</groupId>
+        <artifactId>bom-certified</artifactId>
+        <version>${version.wildfly.swarm}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+       -->
+
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.wildfly.swarm</groupId>
+      <artifactId>jaxrs</artifactId>
+    </dependency>
+
+        <!-- Add monitor fraction -->
+    <dependency>
+      <groupId>org.wildfly.swarm</groupId>
+      <artifactId>cdi</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.wildfly.core</groupId>
+      <artifactId>wildfly-controller-client</artifactId>
+      <version>2.2.1.Final</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.wildfly.swarm</groupId>
+        <artifactId>wildfly-swarm-plugin</artifactId>
+        <version>${version.wildfly.swarm}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>package</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${maven-war-plugin.version}</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+    </plugins>
+
+  </build>
+
+  <profiles>
+    <profile>
+      <id>openshift</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric8-maven-plugin</artifactId>
+            <version>${fabric8-maven-plugin.version}</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>resource</goal>
+                  <goal>build</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <generator>
+                <includes>
+                  <include>wildfly-swarm</include>
+                </includes>
+              </generator>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+
+</project>
